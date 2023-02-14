@@ -151,8 +151,8 @@ bcs = DirichletBC(VV, Constant((0, 0)), 7)
 # Define the objective function
 J = 0.5 * inner(u - u_star, u - u_star) * dx(4)
 func1_sub1 = kappa_d_e * W(v_v(rho)) * dx
-func1_sub1 = kappa_d_e * W(v_s(rho)) * dx
-func1_sub1 = kappa_d_e * W(v_r(rho)) * dx
+func1_sub2 = kappa_d_e * W(v_s(rho)) * dx
+func1_sub3 = kappa_d_e * W(v_r(rho)) * dx
 
 func1 = func1_sub1 + func1_sub2 + func1_sub3
 

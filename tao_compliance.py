@@ -40,8 +40,6 @@ mesh = Mesh(options.mesh)
 Id = Identity(mesh.geometric_dimension()) #Identity tensor
 
 # Define the function spaces
-# Try using DG0 function space
-
 V = FunctionSpace(mesh, 'CG', 1)
 VV = VectorFunctionSpace(mesh, 'CG', 1, dim = 2)
 
@@ -64,7 +62,6 @@ rho3 = 0.3 + 0.3 * cos(4*pi*x) * cos(8*pi*y)
 
 rho2 = interpolate(rho2, V)
 rho3 = interpolate(rho3, V)
-
 
 rho = as_vector([rho2, rho3])
 rho = interpolate(rho, VV)

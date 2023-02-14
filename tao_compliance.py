@@ -1,8 +1,6 @@
 def parse():
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('-tao_bncg_type', '--tao_bncg_type', type = str, default = 'ssml_bfgs', help = 'BNCG algorithm type')
-    parser.add_argument('-tao_bncg_alpha', '--tao_bncg_alpha', type = float, default = 0.5, help = 'Scalar preconditioning')
     parser.add_argument('-tao_monitor', '--tao_monitor', action = 'store_true', help = 'TAO monitor')
     parser.add_argument('-ls', '--lagrange_s', type = float, default = 5.0, help = 'Lagrange multiplier for structural material')
     parser.add_argument('-lr', '--lagrange_r', type = float, default = 0.5, help = 'Lagrange multiplier for responsive material')
@@ -56,9 +54,6 @@ rho3 = Function(V, name = "Responsive material")  # Responsive material 2(Red)
 x, y = SpatialCoordinate(mesh)
 rho2 = interpolate(Constant(options.volume_s), V)
 rho3 = interpolate(Constant(options.volume_r), V)
-
-rho2 = 0.5 + 0.5 * sin(4*pi*x) * sin(8*pi*y)
-rho3 = 0.3 + 0.3 * cos(4*pi*x) * cos(8*pi*y)
 
 rho2 = interpolate(rho2, V)
 rho3 = interpolate(rho3, V)

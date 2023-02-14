@@ -19,7 +19,7 @@ def parse():
 	parser.add_argument('-k', '--kappa', type = float, default = 1.0e-2, help = 'Weight of Modica-Mortola')
 	parser.add_argument('-e', '--epsilon', type = float, default = 5.0e-3, help = 'Phase-field regularization parameter')
 	parser.add_argument('-o', '--output', type = str, default = 'output1', help = 'Output folder')
-	parser.add_argument('-m', '--mesh', type = str, default = 'motion_mesh1.msh', help = 'Dimensions of meshed beam')
+	parser.add_argument('-m', '--mesh', type = str, default = 'motion.msh', help = 'Dimensions of meshed beam')
 	parser.add_argument('-es', '--esmodulus', type = float, default = 0.1, help = 'Elastic Modulus for structural material')
 	parser.add_argument('-er', '--ermodulus', type = float, default = 1.0, help = 'Elastic Modulus for responsive material')
 	parser.add_argument('-p', '--power_p', type = float, default = 2.0, help = 'Power for elasticity interpolation')
@@ -41,8 +41,6 @@ mesh = Mesh(options.mesh)
 Id = Identity(mesh.geometric_dimension()) #Identity tensor
 
 # Define the function spaces
-# Try using DG0 function space
-
 V = FunctionSpace(mesh, 'CG', 1)
 VV = VectorFunctionSpace(mesh, 'CG', 1, dim = 2)
 
@@ -123,9 +121,8 @@ def h_r(rho):
 
 
 # Define the double-well potential function
-# W(x, y) = (x + y)^q * (1 - x)^q * (1 - y)^q
-def W(rho):
-	return pow((rho.sub(0) + rho.sub(1)), options.power_q) * pow((1 - rho.sub(0)), options.power_q) * pow((1 - rho.sub(1)), options.power_q)
+def W(x):
+	return pow((x * (1 - x)), options.power_q)
 
 # Define strain tensor epsilon(u)
 def epsilon(u):
@@ -153,7 +150,11 @@ bcs = DirichletBC(VV, Constant((0, 0)), 7)
 
 # Define the objective function
 J = 0.5 * inner(u - u_star, u - u_star) * dx(4)
-func1 = kappa_d_e * W(rho) * dx
+func1_sub1 = kappa_d_e * W(v_v(rho)) * dx
+func1_sub1 = kappa_d_e * W(v_s(rho)) * dx
+func1_sub1 = kappa_d_e * W(v_r(rho)) * dx
+
+func1 = func1_sub1 + func1_sub2 + func1_sub3
 
 func2_sub1 = inner(grad(v_v(rho)), grad(v_v(rho))) * dx
 func2_sub2 = inner(grad(v_s(rho)), grad(v_s(rho))) * dx

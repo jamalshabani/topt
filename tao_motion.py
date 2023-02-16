@@ -80,7 +80,7 @@ kappa_d_e = Constant(kappa / epsilon)
 kappa_m_e = Constant(kappa * epsilon)
 
 # Define the boundary/traction force
-f = Constant((0, -1.0))
+f = Constant((0, 0))
 u_star = Constant((0, 1.0))
 
 # Young's modulus of the beam and poisson ratio
@@ -127,6 +127,10 @@ def W(x):
 # Define strain tensor epsilon(u)
 def epsilon(u):
 	return 0.5 * (grad(u) + grad(u).T)
+
+# Define the residual stresses
+def sigma_A(A, Id):
+	return lambda_r * tr(A) * Id + 2 * mu_r * A
 
 # Define the stress tensor sigma_v(u) for void
 def sigma_v(u, Id):
@@ -175,7 +179,7 @@ a_forward_s = h_s(rho) * inner(sigma_s(u, Id), epsilon(v)) * dx
 a_forward_r = h_r(rho) * inner(sigma_r(u, Id), epsilon(v)) * dx
 a_forward = a_forward_v + a_forward_s + a_forward_r
 
-L_forward = inner(f, v) * ds(8)
+L_forward = inner(sigma_A(Id, Id), epsilon(v)) * dx
 R_fwd = a_forward - L_forward
 
 # Define the Lagrangian
@@ -184,7 +188,7 @@ a_lagrange_s = h_s(rho) * inner(sigma_s(u, Id), epsilon(p)) * dx
 a_lagrange_r = h_r(rho) * inner(sigma_r(u, Id), epsilon(p)) * dx
 a_lagrange   = a_lagrange_v + a_lagrange_s + a_lagrange_r
 
-L_lagrange = inner(f, p) * ds(8)
+L_lagrange = inner(sigma_A(Id, Id), epsilon(p)) * dx
 R_lagrange = a_lagrange - L_lagrange
 L = JJ - R_lagrange
 
@@ -271,9 +275,9 @@ with ub.dat.vec as ub_vec:
 
 # Setting TAO solver
 tao = PETSc.TAO().create(PETSc.COMM_SELF)
-tao.setType('bncg')
+tao.setType('cg')
 tao.setObjectiveGradient(FormObjectiveGradient, None)
-tao.setVariableBounds(rho_lb, rho_ub)
+# tao.setVariableBounds(rho_lb, rho_ub)
 tao.setFromOptions()
 
 # Initial design guess

@@ -6,6 +6,7 @@ def parse():
     parser.add_argument('-lr', '--lagrange_r', type = float, default = 0.5, help = 'Lagrange multiplier for responsive material')
     parser.add_argument('-tao_converged_reason', '--tao_converged_reason', action = 'store_true', help = 'TAO convergence reason')
     parser.add_argument('-tao_ls_type', '--tao_ls_type', type = str, default = 'more-thuente', help = "TAO line search")
+    parser.add_argument('-tao_bncg_type', '--tao_bncg_type', type = str, default = 'gd', help = "TAO algorithm")
     parser.add_argument('-tao_view', '--tao_view', action = 'store_true', help = "View convergence details")
     parser.add_argument('-tao_max_it', '--tao_max_it', type = int, default = 100, help = 'Number of TAO iterations')
     parser.add_argument('-tao_gatol', '--tao_gatol', type = float, default = 1.0e-7, help = 'Stop if norm of gradient is less than this')
@@ -260,9 +261,9 @@ with ub.dat.vec as ub_vec:
 
 # Setting TAO solver
 tao = PETSc.TAO().create(PETSc.COMM_SELF)
-tao.setType('cg')
+tao.setType('bncg')
 tao.setObjectiveGradient(FormObjectiveGradient, None)
-# tao.setVariableBounds(rho_lb, rho_ub)
+tao.setVariableBounds(rho_lb, rho_ub)
 tao.setFromOptions()
 
 # Initial design guess

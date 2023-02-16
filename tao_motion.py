@@ -2,7 +2,6 @@ def parse():
 	import argparse
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-tao_type', '--tao_type', type = str, default = 'bncg', help = 'TAO algorithm type')
-	parser.add_argument('-tao_bncg_type', '--tao_bncg_type', type = str, default = 'gd', help = "TAO algorithm")
 	parser.add_argument('-tao_max_funcs', '--tao_max_funcs', type = int, default = 10000, help = 'TAO maximum functions evaluations')
 	parser.add_argument('-tao_monitor', '--tao_monitor', action = 'store_true', help = 'TAO monitor')
 	parser.add_argument('-ls', '--lagrange_s', type = float, default = 5.0, help = 'Lagrange multiplier for structural material')
@@ -276,9 +275,9 @@ with ub.dat.vec as ub_vec:
 
 # Setting TAO solver
 tao = PETSc.TAO().create(PETSc.COMM_SELF)
-tao.setType('cg')
+tao.setType('bncg')
 tao.setObjectiveGradient(FormObjectiveGradient, None)
-# tao.setVariableBounds(rho_lb, rho_ub)
+tao.setVariableBounds(rho_lb, rho_ub)
 tao.setFromOptions()
 
 # Initial design guess

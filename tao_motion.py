@@ -2,6 +2,7 @@ def parse():
 	import argparse
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-tao_type', '--tao_type', type = str, default = 'bncg', help = 'TAO algorithm type')
+	parser.add_argument('-tao_bncg_type', '--tao_bncg_type', type = str, default = 'gd', help = "TAO algorithm")
 	parser.add_argument('-tao_max_funcs', '--tao_max_funcs', type = int, default = 10000, help = 'TAO maximum functions evaluations')
 	parser.add_argument('-tao_monitor', '--tao_monitor', action = 'store_true', help = 'TAO monitor')
 	parser.add_argument('-ls', '--lagrange_s', type = float, default = 5.0, help = 'Lagrange multiplier for structural material')
@@ -80,7 +81,7 @@ kappa_d_e = Constant(kappa / epsilon)
 kappa_m_e = Constant(kappa * epsilon)
 
 # Define the boundary/traction force
-f = Constant((0, 0))
+f = Constant((0, -1.0))
 u_star = Constant((0, 1.0))
 
 # Young's modulus of the beam and poisson ratio
@@ -179,7 +180,7 @@ a_forward_s = h_s(rho) * inner(sigma_s(u, Id), epsilon(v)) * dx
 a_forward_r = h_r(rho) * inner(sigma_r(u, Id), epsilon(v)) * dx
 a_forward = a_forward_v + a_forward_s + a_forward_r
 
-L_forward = inner(sigma_A(Id, Id), epsilon(v)) * dx
+L_forward = inner(f, v) * ds(8)
 R_fwd = a_forward - L_forward
 
 # Define the Lagrangian
@@ -188,7 +189,7 @@ a_lagrange_s = h_s(rho) * inner(sigma_s(u, Id), epsilon(p)) * dx
 a_lagrange_r = h_r(rho) * inner(sigma_r(u, Id), epsilon(p)) * dx
 a_lagrange   = a_lagrange_v + a_lagrange_s + a_lagrange_r
 
-L_lagrange = inner(sigma_A(Id, Id), epsilon(p)) * dx
+L_lagrange = inner(f, p) * ds(8)
 R_lagrange = a_lagrange - L_lagrange
 L = JJ - R_lagrange
 

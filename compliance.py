@@ -1,4 +1,4 @@
-# HOW TO RUN THIS CODE:
+# HOW TO RUN PROGRAM CODE:
 # python3 minimumComplianceTAO.py -tao_monitor -tax_max_it 100
 # Option: -tao_monotor prints the Function value at each iteration
 # Option: -tao_max_it specify maximum number of iterations. Here we set to 100

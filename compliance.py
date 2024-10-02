@@ -4,7 +4,7 @@
 # Option: -tao_max_it specify maximum number of iterations. Here we set to 100
 # where P_{\varepsilon}(\rho) is the Modica-Mortola perimeter term
 # alpha = 10^{-2} is the penalization parameter
-# f = Constant((0, -1)) is the tracting force
+# f = Constant((0, -1)) is a downward boundary force
 # \rho is the design variable i.e \rho = 0 means "void" or "hole" and \rho = 1 means "solid" or "material"
 # \Omega is the design domain. It is a cantilever beam with length 1 and width 1/3 clamped on its left side \Gamma_D
 

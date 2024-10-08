@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian">
+<Collection>
+<DataSet timestep="0" file="beam/beam_0.vtu" />
+<DataSet timestep="0" file="beam/beam_1.vtu" />
+<DataSet timestep="5" file="beam/beam_2.vtu" />
+<DataSet timestep="10" file="beam/beam_3.vtu" />
+<DataSet timestep="15" file="beam/beam_4.vtu" />
+<DataSet timestep="20" file="beam/beam_5.vtu" />
+<DataSet timestep="25" file="beam/beam_6.vtu" />
+<DataSet timestep="30" file="beam/beam_7.vtu" />
+<DataSet timestep="35" file="beam/beam_8.vtu" />
+<DataSet timestep="40" file="beam/beam_9.vtu" />
+<DataSet timestep="45" file="beam/beam_10.vtu" />
+<DataSet timestep="50" file="beam/beam_11.vtu" />
+<DataSet timestep="55" file="beam/beam_12.vtu" />
+<DataSet timestep="60" file="beam/beam_13.vtu" />
+<DataSet timestep="65" file="beam/beam_14.vtu" />
+<DataSet timestep="70" file="beam/beam_15.vtu" />
+<DataSet timestep="75" file="beam/beam_16.vtu" />
+<DataSet timestep="80" file="beam/beam_17.vtu" />
+<DataSet timestep="85" file="beam/beam_18.vtu" />
+<DataSet timestep="90" file="beam/beam_19.vtu" />
+<DataSet timestep="95" file="beam/beam_20.vtu" />
+<DataSet timestep="100" file="beam/beam_21.vtu" />
+</Collection>
+</VTKFile>

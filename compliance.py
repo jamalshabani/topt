@@ -10,6 +10,36 @@
 
 # This problem is self-adjoint. Lucky for us, we do not need to solve the adjoint PDE to compute sensitivity
 
+def parse():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-tao_bncg_type', '--tao_bncg_type', type = str, default = 'ssml_bfgs', help = 'BNCG algorithm type')
+    parser.add_argument('-tao_bncg_alpha', '--tao_bncg_alpha', type = float, default = 0.5, help = 'Scalar preconditioning')
+    parser.add_argument('-tao_monitor', '--tao_monitor', action = 'store_true', help = 'TAO monitor')
+    parser.add_argument('-ls', '--lagrange_s', type = float, default = 5.0, help = 'Lagrange multiplier for structural material')
+    parser.add_argument('-lr', '--lagrange_r', type = float, default = 0.5, help = 'Lagrange multiplier for responsive material')
+    parser.add_argument('-tao_converged_reason', '--tao_converged_reason', action = 'store_true', help = 'TAO convergence reason')
+    parser.add_argument('-tao_ls_type', '--tao_ls_type', type = str, default = 'more-thuente', help = "TAO line search")
+    parser.add_argument('-tao_view', '--tao_view', action = 'store_true', help = "View convergence details")
+    parser.add_argument('-tao_max_it', '--tao_max_it', type = int, default = 100, help = 'Number of TAO iterations')
+    parser.add_argument('-tao_gatol', '--tao_gatol', type = float, default = 1.0e-7, help = 'Stop if norm of gradient is less than this')
+    parser.add_argument('-tao_grtol', '--tao_grtol', type = float, default = 1.0e-7, help = 'Stop if relative norm of gradient is less than this')
+    parser.add_argument('-tao_gttol', '--tao_gttol', type = float, default = 1.0e-7, help = 'Stop if norm of gradient is reduced by this factor')
+    parser.add_argument('-vs', '--volume_s', type = float, default = 0.4, help = 'Volume percentage for structural material')
+    parser.add_argument('-vr', '--volume_r', type = float, default = 0.4, help = 'Volume percentage for responsive material')
+    parser.add_argument('-k', '--kappa', type = float, default = 1.0e-2, help = 'Weight of Modica-Mortola')
+    parser.add_argument('-e', '--epsilon', type = float, default = 5.0e-3, help = 'Phase-field regularization parameter')
+    parser.add_argument('-o', '--output', type = str, default = 'output1', help = 'Output folder')
+    parser.add_argument('-m', '--mesh', type = str, default = '1_to_6_mesh', help = 'Dimensions of meshed beam')
+    parser.add_argument('-es', '--esmodulus', type = float, default = 0.1, help = 'Elastic Modulus for structural material')
+    parser.add_argument('-er', '--ermodulus', type = float, default = 1.0, help = 'Elastic Modulus for responsive material')
+    parser.add_argument('-p', '--power_p', type = float, default = 2.0, help = 'Power for elasticity interpolation')
+    parser.add_argument('-q', '--power_q', type = float, default = 2.0, help = 'Power for multiple-well function')
+    options = parser.parse_args()
+    return options
+
+options = parse()
+
 from firedrake import *
 from petsc4py import PETSc
 

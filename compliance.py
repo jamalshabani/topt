@@ -1,15 +1,6 @@
 # HOW TO RUN PROGRAM CODE:
-# python3 minimumComplianceTAO.py -tao_monitor -tax_max_it 100
-# Option: -tao_monotor prints the Function value at each iteration
-# Option: -tao_max_it specify maximum number of iterations. Here we set to 100
-# where P_{\varepsilon}(\rho) is the Modica-Mortola perimeter term
-# alpha = 10^{-2} is the penalization parameter
-# f = Constant((0, -1)) is a downward boundary force
-# \rho is the design variable i.e \rho = 0 means "void" or "hole" and \rho = 1 means "solid" or "material"
-# \Omega is the design domain. It is a cantilever beam with length 1 and width 1/3 clamped on its left side \Gamma_D
-
-# This problem is self-adjoint. Lucky for us, we do not need to solve the adjoint PDE to compute sensitivity
-
+# 1. Cantilever beam: python3 compliance.py -tao_monitor -l 5.0 -tao_max_it 1000 -v 0.4 -k 1.0e-2 -e 5.0e-3 -o 'cantileverBeam' -m 'cantileverBeam.msh'
+# 2. L Bracket: python3 compliance.py -tao_monitor -l 25.0 -tao_max_it 1000 -v 0.4 -k 5.0e-2 -e 4.0e-3 -o 'LBracket' -m 'LBracket.msh'
 def parse():
     import argparse
     parser = argparse.ArgumentParser()

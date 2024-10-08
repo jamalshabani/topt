@@ -92,7 +92,7 @@ def projectGradientDescent():
 
     dJdrho.interpolate(assemble(derivative(L, rho)).riesz_representation(riesz_map="l2"))
     #dJdrho.interpolate(dJdrho - assemble(dJdrho * dx)/omega)
-    rho.interpolate(rho - 5.0 * dJdrho)
+    rho.interpolate(rho - 50.0 * dJdrho)
     return rho
 
 

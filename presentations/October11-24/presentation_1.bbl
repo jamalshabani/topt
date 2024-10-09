@@ -1,0 +1,66 @@
+\begin{thebibliography}{10}
+
+\bibitem{Sisto1990}
+S.~Baldo, ``Minimal interface criterion for phase transitions in mixtures of
+  {C}ahn-{H}illiard fluids,'' {\em Annales de l'Institut Henri Poincaré C,
+  Analyse non linéaire}, vol.~7, no.~2, pp.~67--90, 1990.
+
+\bibitem{BourdinChambolle2006}
+B.~Bourdin and A.~Chambolle, ``The phase-field method in optimal design,''
+  Solid Mechanics and its Applications, pp.~207--216, Springer, June 2006.
+
+\bibitem{DalMaso-1993}
+G.~{Dal~Maso}, {\em An introduction to {$\Gamma$}-convergence}.
+\newblock Boston: Birkh{\"a}user, 1993.
+
+\bibitem{Modica-Mortola-1977b}
+L.~Modica and S.~Mortola, ``Un esempio di {$\Gamma$}--convergenza,'' {\em
+  Bollettino dell'Unione Matematica Italiana B (5)}, vol.~14, no.~1,
+  pp.~285--299, 1977.
+
+\bibitem{Shabani}
+J.~Shabani, K.~Bhattacrarya, and B.~Bourdin, ``Systematic design of compliant
+  morphing structures: a phase-field approach,'' {\em Applied Mathematics and
+  Optimization}, 2024 (Submitted for publication).
+
+\bibitem{Braides-2002}
+A.~Braides, {\em {$\Gamma$}-convergence for beginners}, vol.~22 of {\em Oxford
+  Lecture Series in Mathematics and its Applications}.
+\newblock Oxford: Oxford University Press, 2002.
+
+\bibitem{Allaire2002}
+G.~Allaire, {\em Shape optimization by the homogenization method}.
+\newblock New York: Springer-Verlag, 2002.
+
+\bibitem{SimonFarrel2013}
+W.~F. Simon and E.~F. Patrick, ``A framework for automated pde-constrained
+  optimisation,'' {\em CoRR}, vol.~abs/1302.3894, 2013.
+
+\bibitem{Cherkaev2000}
+C.~Andrej, {\em Variational Methods for Structural Optimization}.
+\newblock No.~140 in Applied Mathematical Sciences, Berlin: Springer Verlag,
+  2000.
+
+\bibitem{AlexanderianSunseri2019}
+A.~Alexanderian and I.~Sunseri, ``Computing gradients and hessians using the
+  adjoint method,'' {\em North Carolina State University}, 2019.
+
+\bibitem{More-Thuente1994}
+J.~J. Mor\'{e} and D.~J. Thuente, ``Line search algorithms with guaranteed
+  sufficient decrease,'' {\em ACM Transactions on Mathematical Software},
+  vol.~20, no.~3, pp.~286--307, 1994.
+
+\bibitem{SMA2015}
+H.~Rodrigue, W.~Wang, B.~Bhandari, and S.-H. Ahn, ``{Fabrication of wrist-like
+  SMA-based actuator by double smart soft composite casting},'' {\em
+  \normalfont{Smart Materials and Structures}}, vol.~24, p.~125003, 2015.
+
+\bibitem{FiredrakeUserManual}
+D.~A. Ham, P.~H.~J. Kelly, L.~Mitchell, C.~J. Cotter, R.~C. Kirby, K.~Sagiyama,
+  N.~Bouziani, S.~Vorderwuelbecke, T.~J. Gregory, J.~Betteridge, D.~R. Shapero,
+  R.~W. Nixon-Hill, C.~J. Ward, P.~E. Farrell, P.~D. Brubeck, I.~Marsden, T.~H.
+  Gibson, M.~Homolya, T.~Sun, A.~T.~T. McRae, F.~Luporini, A.~Gregory,
+  M.~Lange, S.~W. Funke, F.~Rathgeber, G.-T. Bercea, and G.~R. Markall,
+  ``Firedrake user manual,'' 5 2023.
+
+\end{thebibliography}

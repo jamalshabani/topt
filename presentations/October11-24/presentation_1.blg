@@ -1,0 +1,49 @@
+This is BibTeX, Version 0.99d (TeX Live 2022)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: presentation_1.aux
+The style file: ieeetr.bst
+Database file #1: defence.bib
+Warning--empty booktitle in BourdinChambolle2006
+Warning--empty journal in FiredrakeUserManual
+You've used 13 entries,
+            1876 wiz_defined-function locations,
+            575 strings with 6197 characters,
+and the built_in function-call counts, 3167 in all, are:
+= -- 284
+> -- 168
+< -- 0
++ -- 62
+- -- 49
+* -- 236
+:= -- 483
+add.period$ -- 17
+call.type$ -- 13
+change.case$ -- 9
+chr.to.int$ -- 0
+cite$ -- 15
+duplicate$ -- 160
+empty$ -- 294
+format.name$ -- 49
+if$ -- 750
+int.to.chr$ -- 0
+int.to.str$ -- 13
+missing$ -- 17
+newline$ -- 46
+num.names$ -- 13
+pop$ -- 48
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 86
+stack$ -- 0
+substring$ -- 132
+swap$ -- 54
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 2
+while$ -- 26
+width$ -- 15
+write$ -- 125
+(There were 2 warnings)

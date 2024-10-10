@@ -82,6 +82,10 @@ beam = VTKFile('output/beam.pvd')
 
 # implement line search
 
+# TO DO!
+# 1. Add line search wolfe conditions
+# 2. Add projected congugate gradient descents methods
+# 3. Add 3D support
 def projectGradientDescent():
 
     dJdrho = Function(V, name = "Gradient w.r.t rho")
@@ -94,6 +98,8 @@ def projectGradientDescent():
     #dJdrho.interpolate(dJdrho - assemble(dJdrho * dx)/omega)
     rho.interpolate(rho - 50.0 * dJdrho)
     return rho
+
+
 
 
 

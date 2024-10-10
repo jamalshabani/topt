@@ -44,8 +44,7 @@ rho.interpolate(Constant(options.volume))
 ###### End Initial Design #####
 
 # Total volume of the domain |omega|
-rho_i.interpolate(Constant(1.0))
-omega = assemble(rho_i * dx)
+omega = assemble(Function(V).interpolate(1.0) * dx)
 
 
 # Define the constant parameters used in the problem

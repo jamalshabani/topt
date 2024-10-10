@@ -1,7 +1,22 @@
+def parse():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-n', '--iterations', type = int, default = 100, help = 'Number of iterations')
+    parser.add_argument('-tol', '--tolerance', type = float, default = 1.0e-6, help = 'Convergence tolerance')
+    parser.add_argument('-v', '--volume', type = float, default = 0.4, help = 'Volume fraction occupied by solid')
+    parser.add_argument('-k', '--kappa', type = float, default = 1.0e-2, help = 'Weight of the perimeter')
+    parser.add_argument('-e', '--epsilon', type = float, default = 5.0e-5, help = 'Phase-field regularization parameter')
+    parser.add_argument('-o', '--output', type = str, default = 'output', help = 'Output folder')
+    parser.add_argument('-m', '--mesh', type = str, default = 'cantileverBeam.msh', help = 'Dimensions of meshed beam')
+    options = parser.parse_args()
+    return options
+
+options = parse()
+
 from firedrake import *
 
 # Import "gmesh" mesh
-mesh = Mesh("cantileverBeam.msh")
+mesh = Mesh(options.mesh)
 
 Id = Identity(mesh.geometric_dimension()) # Identity tensor
 
@@ -14,21 +29,22 @@ VV = VectorFunctionSpace(mesh, 'CG', 1)
 rho = Function(V, name = "Material density")
 rho_i = Function(V, name = "Material density")
 x, y = SpatialCoordinate(mesh)
-rho.interpolate(Constant(0.4))
+rho.interpolate(Constant(options.volume))
 ###### End Initial Design #####
 
 # Total volume of the domain |omega|
 omega = assemble(Function(V).interpolate(1.0) * dx)
 
 # Define the constant parameters used in the problem
-alpha = 1.0e-2 # Perimeter weight
+kappa = options.kappa # Perimeter weight
 delta = 1.0e-3 
-epsilon = 5.0e-5
+epsilon = options.epsilon
 
-alpha_d_e = alpha / epsilon
-alpha_m_e = alpha * epsilon
+kappa_d_e = kappa / epsilon
+kappa_m_e = kappa * epsilon
+iterations = options.iterations
 
-# Downward traction force on the right corner
+# Downward Load
 f = Constant((0, -1))
 
 # Young's modulus of the beam and poisson ratio
@@ -62,8 +78,8 @@ bcs = DirichletBC(VV, Constant((0, 0)), 7)
 
 # Define the objective function
 func1 = inner(f, u) * ds(8)
-func2 = alpha_d_e * W(rho) * dx
-func3 = alpha_m_e * inner(grad(rho), grad(rho)) * dx
+func2 = kappa_d_e * W(rho) * dx
+func3 = kappa_m_e * inner(grad(rho), grad(rho)) * dx
 
 J = func1 + func2 + func3
 
@@ -78,14 +94,15 @@ L_legrange = inner(f, u) * ds(8)
 R_legrange = a_legrange - L_legrange
 L = J - R_legrange
 
-beam = VTKFile('output/beam.pvd')
+beam = VTKFile(options.output + '/beam.pvd')
 
 # implement line search
 
 # TO DO!
-# 1. Add line search wolfe conditions
-# 2. Add projected congugate gradient descents methods
-# 3. Add 3D support
+# 1. Add line search for fast convergence
+# 2. Add convergence criteria
+# 3. Add projected congugate gradient descents methods
+# 4. Add 3D support
 def projectGradientDescent():
 
     dJdrho = Function(V, name = "Gradient w.r.t rho")
@@ -94,26 +111,27 @@ def projectGradientDescent():
     solve(R_fwd == 0, u, bcs = bcs)
 
     dJdrho.interpolate(assemble(derivative(L, rho)).riesz_representation(riesz_map="l2"))
+
+    # Do gradient projection into appropriate spaces for volume constraint
     dJdrho.interpolate(dJdrho - assemble(dJdrho * dx)/omega)
+
+    # Do the naive projected gradient descent
     rho.interpolate(rho - 50.0 * dJdrho)
-    return rho
 
-
-
-
+    return rho, u
 
 
 if __name__ == "__main__":
-    for i in range(5000):
+    for i in range(iterations):
         
-        rho = projectGradientDescent()
-        
-        print(i)
+        rho, u = projectGradientDescent()
+        volume = assemble(rho * dx)/omega
+        objValue = assemble(func1)
+        print("iteration.: {0} obj.: {1:.5f} Vol.: {2:.2f}".format(i + 1, objValue, volume))
 
+        # Save designs for processing using Paraview or VisIt
         if i%10 == 0:
-            volume = assemble(rho * dx)/omega
-            objValue = assemble(func1)
-            beam.write(rho)
-            print("it.: {0} , obj.: {1:.3f} Vol.: {2:.3f}".format(i, objValue, volume))
+            beam.write(rho, u, time = i)
+            
 
     

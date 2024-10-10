@@ -127,7 +127,7 @@ if __name__ == "__main__":
         rho, u = projectGradientDescent()
         volume = assemble(rho * dx)/omega
         objValue = assemble(func1)
-        print("iteration.: {0} obj.: {1:.5f} Vol.: {2:.2f}".format(i + 1, objValue, volume))
+        print("Iteration.: {0} Obj.: {1:.5f} Vol.: {2:.2f}".format(i + 1, objValue, volume))
 
         # Save designs for processing using Paraview or VisIt
         if i%10 == 0:

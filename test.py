@@ -89,13 +89,12 @@ beam = VTKFile('output/beam.pvd')
 def projectGradientDescent():
 
     dJdrho = Function(V, name = "Gradient w.r.t rho")
-    volume = assemble(rho * dx) * 3
 
     # Solve forward PDE
     solve(R_fwd == 0, u, bcs = bcs)
 
     dJdrho.interpolate(assemble(derivative(L, rho)).riesz_representation(riesz_map="l2"))
-    #dJdrho.interpolate(dJdrho - assemble(dJdrho * dx)/omega)
+    dJdrho.interpolate(dJdrho - assemble(dJdrho * dx)/omega)
     rho.interpolate(rho - 50.0 * dJdrho)
     return rho
 
@@ -106,10 +105,15 @@ def projectGradientDescent():
 
 if __name__ == "__main__":
     for i in range(5000):
-        print(i)
+        
         rho = projectGradientDescent()
+        
+        print(i)
 
         if i%10 == 0:
+            volume = assemble(rho * dx)/omega
+            objValue = assemble(func1)
             beam.write(rho)
+            print("it.: {0} , obj.: {1:.3f} Vol.: {2:.3f}".format(i, objValue, volume))
 
     

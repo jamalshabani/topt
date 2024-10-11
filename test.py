@@ -98,8 +98,6 @@ L = J - R_legrange
 
 beam = VTKFile(options.output + '/beam.pvd')
 
-# implement line search
-
 # TO DO!
 # 1. Add line search for fast convergence
 # 2. Add projected congugate gradient descents methods

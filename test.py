@@ -125,13 +125,16 @@ if __name__ == "__main__":
     for i in range(iterations):
         
         rho, u = projectGradientDescent()
+        rho_i.interpolate(rho)
         volume = assemble(rho * dx)/omega
         objValue = assemble(func1)
         print("Iteration.: {0} Obj.: {1:.5f} Vol.: {2:.2f}".format(i + 1, objValue, volume))
 
         # Save designs for processing using Paraview or VisIt
         if i%10 == 0:
-            beam.write(rho, u, time = i)
+            rho_i.interpolate(conditional(gt(rho_i, Constant(1.0)), Constant(1.0), rho_i))
+            rho_i.interpolate(conditional(lt(rho_i, Constant(0.0)), Constant(0.0), rho_i))
+            beam.write(rho_i, u, time = i)
             
 
     

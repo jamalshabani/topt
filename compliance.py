@@ -70,7 +70,7 @@ _lambda = (E * nu)/((1 + nu) * (1 - 2 * nu))
 def h(rho):
 	return delta * (1 - rho)**2 + rho**2
 
-# Define double-well potential W(a) function i.e W(x) = x^2(1 - x)^2
+# Define double-well potential W function i.e W(x) = x^2(1 - x)^2
 def W(rho):
 	return pow(rho, 2) * pow((1 - rho), 2)
 

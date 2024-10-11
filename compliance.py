@@ -1,4 +1,4 @@
-# HOW TO RUN PROGRAM CODE:
+# HOW TO RUN THIS CODE:
 # 1. Cantilever beam: python3 compliance.py -tao_monitor -l 5.0 -tao_max_it 1000 -v 0.4 -k 1.0e-2 -e 5.0e-3 -o 'cantileverBeam' -m 'cantileverBeam.msh'
 # 2. L Bracket      : python3 compliance.py -tao_monitor -l 25.0 -tao_max_it 1000 -v 0.4 -k 5.0e-2 -e 4.0e-3 -o 'LBracket' -m 'LBracket.msh'
 # 3. MBB Beam       : python3 compliance.py -tao_monitor -l 6.0 -tao_max_it 1000 -v 0.4 -k 1.0e-2 -e 5.0e-3 -o 'MBBbeam' -m 'MBBbeam.msh'
@@ -27,7 +27,7 @@ options = parse()
 from firedrake import *
 from petsc4py import PETSc
 
-# Import "gmesh" mesh
+# Import mesh
 mesh = Mesh(options.mesh)
 Id = Identity(mesh.geometric_dimension()) # Identity tensor
 

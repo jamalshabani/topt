@@ -28,6 +28,8 @@ VV = VectorFunctionSpace(mesh, 'CG', 1)
 ###### Begin Initial Design #####
 rho = Function(V, name = "Material density")
 rho_i = Function(V, name = "Material density")
+dJdrho = Function(V, name = "Gradient w.r.t rho")
+projdJdrho = Function(V, name = "Projected gradient")
 x, y = SpatialCoordinate(mesh)
 rho.interpolate(Constant(options.volume))
 ###### End Initial Design #####
@@ -100,41 +102,55 @@ beam = VTKFile(options.output + '/beam.pvd')
 
 # TO DO!
 # 1. Add line search for fast convergence
-# 2. Add convergence criteria
-# 3. Add projected congugate gradient descents methods
-# 4. Add 3D support
+# 2. Add projected congugate gradient descents methods
+# 3. Add 3D support
 def projectGradientDescent():
-
-    dJdrho = Function(V, name = "Gradient w.r.t rho")
 
     # Solve forward PDE
     solve(R_fwd == 0, u, bcs = bcs)
 
-    dJdrho.interpolate(assemble(derivative(L, rho)).riesz_representation(riesz_map="l2"))
+    # Compute gradients w.r.t to design 
+    dJdrho.interpolate(assemble(derivative(L, rho)).riesz_representation(riesz_map = "l2"))
 
     # Do gradient projection into appropriate spaces for volume constraint
-    dJdrho.interpolate(dJdrho - assemble(dJdrho * dx)/omega)
-
+    projdJdrho.interpolate(dJdrho - assemble(dJdrho * dx)/omega)
+    
     # Do the naive projected gradient descent
-    rho.interpolate(rho - 50.0 * dJdrho)
+    rho.interpolate(rho - 50.0 * projdJdrho)
+    volume = assemble(rho * dx)/omega
+    objValue = assemble(func1)
 
-    return rho, u
+    return rho, u, volume, objValue, dJdrho
 
-
+converged = False
 if __name__ == "__main__":
-    for i in range(iterations):
-        
-        rho, u = projectGradientDescent()
+
+    i = 0
+    while i < iterations and not converged:
+
+        rho, u, volume, objValue, dJdrho = projectGradientDescent()
+
+        # Convergence check
+        if i == 0:
+            dJdrhoNorm0 = assemble(inner(dJdrho, dJdrho) * dx)
+
+        dJdrhoNorm = assemble(inner(dJdrho, dJdrho) * dx)
+        residual = dJdrhoNorm/dJdrhoNorm0
+
+        if residual < options.tolerance:
+            converged = True
+
         rho_i.interpolate(rho)
-        volume = assemble(rho * dx)/omega
-        objValue = assemble(func1)
-        print("Iteration.: {0} Obj.: {1:.5f} Vol.: {2:.2f}".format(i + 1, objValue, volume))
+
+        print("Iteration.: {0} Obj.: {1:.5f} Vol.: {2:.2f} Residual.: {3:.5f}".format(i + 1, objValue, volume, residual))
 
         # Save designs for processing using Paraview or VisIt
         if i%10 == 0:
             rho_i.interpolate(conditional(gt(rho_i, Constant(1.0)), Constant(1.0), rho_i))
             rho_i.interpolate(conditional(lt(rho_i, Constant(0.0)), Constant(0.0), rho_i))
             beam.write(rho_i, u, time = i)
-            
 
+        i = i + 1
+            
+    print("Converged")
     

@@ -102,21 +102,33 @@ beam = VTKFile(options.output + '/beam.pvd')
 # 1. Add line search for fast convergence
 # 2. Add projected congugate gradient descents methods
 # 3. Add 3D support
+
 def projectGradientDescent():
+
+    stepSize = 1
 
     # Solve forward PDE
     solve(R_fwd == 0, u, bcs = bcs)
+    currentObjValue = assemble(J)
 
     # Compute gradients w.r.t to design 
     dJdrho.interpolate(assemble(derivative(L, rho)).riesz_representation(riesz_map = "l2"))
 
+    # Update design
+    rho.interpolate(rho - stepSize * projdJdrho)
+    objValue1 = assemble(func1)
+    print(objValue0, objValue1)
+
     # Do gradient projection into appropriate spaces for volume constraint
     projdJdrho.interpolate(dJdrho - assemble(dJdrho * dx)/omega)
+
+    # Line search
     
     # Do the naive projected gradient descent
     rho.interpolate(rho - 50.0 * projdJdrho)
     volume = assemble(rho * dx)/omega
     objValue = assemble(func1)
+
 
     return rho, u, volume, objValue, dJdrho
 

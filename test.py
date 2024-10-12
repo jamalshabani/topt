@@ -114,7 +114,7 @@ def projectGradientDescent():
 
     # Compute gradients w.r.t to design 
     dJdrho.interpolate(assemble(derivative(L, rho)).riesz_representation(riesz_map = "l2"))
-    
+
     # Do gradient projection into appropriate spaces for volume constraint
     projdJdrho.interpolate(dJdrho - assemble(dJdrho * dx)/omega)
 
@@ -125,7 +125,7 @@ def projectGradientDescent():
     solve(R_fwd == 0, u, bcs = bcs)
     nextObjValue = assemble(J)
 
-    if nextObjValue > currentObjValue - c * stepSize * assemble(inner(dJdrho, dJdrho) * dx):
+    if nextObjValue > currentObjValue - c * stepSize * assemble(inner(projdJdrho, projdJdrho) * dx):
         stepSize = stepSize * beta
 
         # Update design
@@ -134,11 +134,13 @@ def projectGradientDescent():
         # Solve forward PDE
         solve(R_fwd == 0, u, bcs = bcs)
         nextObjValue = assemble(J)
+    else:
+        # Update design
+        rho.interpolate(rho - stepSize * projdJdrho)
 
     print(stepSize)
 
-    # Do the naive projected gradient descent
-    rho.interpolate(rho - stepSize * projdJdrho)
+    # Compute volume fractions
     volume = assemble(rho * dx)/omega
 
     objValue = assemble(J)

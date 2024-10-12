@@ -104,7 +104,9 @@ beam = VTKFile(options.output + '/beam.pvd')
 # 3. Add 3D support
 
 def projectGradientDescent():
-    stepSize = 1
+    stepSize = 100
+    c = 0.95
+    beta = 0.5
 
     # Solve forward PDE
     solve(R_fwd == 0, u, bcs = bcs)
@@ -112,6 +114,9 @@ def projectGradientDescent():
 
     # Compute gradients w.r.t to design 
     dJdrho.interpolate(assemble(derivative(L, rho)).riesz_representation(riesz_map = "l2"))
+    
+    # Do gradient projection into appropriate spaces for volume constraint
+    projdJdrho.interpolate(dJdrho - assemble(dJdrho * dx)/omega)
 
     # Update design
     rho.interpolate(rho - stepSize * projdJdrho)
@@ -120,15 +125,23 @@ def projectGradientDescent():
     solve(R_fwd == 0, u, bcs = bcs)
     nextObjValue = assemble(J)
 
-    print(currentObjValue, nextObjValue)
+    if nextObjValue > currentObjValue - c * stepSize * assemble(inner(dJdrho, dJdrho) * dx):
+        stepSize = stepSize * beta
 
-    # Do gradient projection into appropriate spaces for volume constraint
-    projdJdrho.interpolate(dJdrho - assemble(dJdrho * dx)/omega)
-    
+        # Update design
+        rho.interpolate(rho - stepSize * projdJdrho)
+
+        # Solve forward PDE
+        solve(R_fwd == 0, u, bcs = bcs)
+        nextObjValue = assemble(J)
+
+    print(stepSize)
+
     # Do the naive projected gradient descent
-    rho.interpolate(rho - 50.0 * projdJdrho)
+    rho.interpolate(rho - stepSize * projdJdrho)
     volume = assemble(rho * dx)/omega
-    objValue = assemble(func1)
+
+    objValue = assemble(J)
 
 
     return rho, u, volume, objValue, dJdrho

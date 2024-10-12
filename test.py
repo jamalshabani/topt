@@ -104,7 +104,6 @@ beam = VTKFile(options.output + '/beam.pvd')
 # 3. Add 3D support
 
 def projectGradientDescent():
-
     stepSize = 1
 
     # Solve forward PDE
@@ -125,8 +124,6 @@ def projectGradientDescent():
 
     # Do gradient projection into appropriate spaces for volume constraint
     projdJdrho.interpolate(dJdrho - assemble(dJdrho * dx)/omega)
-
-    # Line search
     
     # Do the naive projected gradient descent
     rho.interpolate(rho - 50.0 * projdJdrho)

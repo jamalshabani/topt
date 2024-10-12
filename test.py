@@ -116,8 +116,12 @@ def projectGradientDescent():
 
     # Update design
     rho.interpolate(rho - stepSize * projdJdrho)
-    objValue1 = assemble(func1)
-    print(objValue0, objValue1)
+    
+    # Solve forward PDE
+    solve(R_fwd == 0, u, bcs = bcs)
+    nextObjValue = assemble(J)
+
+    print(currentObjValue, nextObjValue)
 
     # Do gradient projection into appropriate spaces for volume constraint
     projdJdrho.interpolate(dJdrho - assemble(dJdrho * dx)/omega)

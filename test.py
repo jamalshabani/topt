@@ -168,7 +168,7 @@ if __name__ == "__main__":
 
         rho_i.interpolate(rho)
 
-        print("Iteration.: {0} Obj.: {1:.5f} Vol.: {2:.2f} Residual.: {3:.6f} ||Delta F||.: {4:.6f}".format(i + 1, objValue, volume, residual, objResidual))
+        print("Iteration.: {0} Obj.: {1:.5f} Vol.: {2:.2f} Residual.: {3:.6f} |Delta F|.: {4:.6f}".format(i + 1, objValue, volume, residual, objResidual))
 
         # Save designs for processing using Paraview or VisIt
         if i%10 == 0:

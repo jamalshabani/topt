@@ -138,7 +138,7 @@ def projectGradientDescent():
         # Update design
         rho.interpolate(rho - stepSize * projdJdrho)
 
-    print(stepSize)
+    objResidual = abs(nextObjValue - currentObjValue)
 
     # Compute volume fractions
     volume = assemble(rho * dx)/omega
@@ -146,7 +146,7 @@ def projectGradientDescent():
     objValue = assemble(J)
 
 
-    return rho, u, volume, objValue, dJdrho
+    return rho, u, volume, objValue, dJdrho, objResidual
 
 converged = False
 if __name__ == "__main__":
@@ -154,7 +154,7 @@ if __name__ == "__main__":
     i = 0
     while i < iterations and not converged:
 
-        rho, u, volume, objValue, dJdrho = projectGradientDescent()
+        rho, u, volume, objValue, dJdrho, objResidual = projectGradientDescent()
 
         # Convergence check
         if i == 0:
@@ -163,12 +163,12 @@ if __name__ == "__main__":
         dJdrhoNorm = assemble(inner(dJdrho, dJdrho) * dx)
         residual = dJdrhoNorm/dJdrhoNorm0
 
-        if residual < options.tolerance:
+        if residual < options.tolerance or objResidual < options.tolerance:
             converged = True
 
         rho_i.interpolate(rho)
 
-        print("Iteration.: {0} Obj.: {1:.5f} Vol.: {2:.2f} Residual.: {3:.5f}".format(i + 1, objValue, volume, residual))
+        print("Iteration.: {0} Obj.: {1:.5f} Vol.: {2:.2f} Residual.: {3:.6f} ||Delta F||.: {4:.6f}".format(i + 1, objValue, volume, residual, objResidual))
 
         # Save designs for processing using Paraview or VisIt
         if i%10 == 0:
@@ -178,5 +178,8 @@ if __name__ == "__main__":
 
         i = i + 1
             
-    print("Converged")
+    if converged:
+        print("Converged after {} iterations......".format(i))
+    else:
+        print("Maximum iterations reached......")
     

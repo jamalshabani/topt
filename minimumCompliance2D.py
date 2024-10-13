@@ -34,6 +34,8 @@ rho = Function(V, name = "Material density")
 rho_i = Function(V, name = "Material density")
 dJdrho = Function(V, name = "Gradient w.r.t rho")
 projdJdrho = Function(V, name = "Projected gradient")
+prevdJdrho = Function(V, name = "Previous gradient")
+currdJdrho = Function(V, name = "Current gradient")
 x, y = SpatialCoordinate(mesh)
 rho.interpolate(Constant(options.volume))
 ###### End Initial Design #####
@@ -147,18 +149,65 @@ def projectGradientDescent():
     # Compute volume fractions
     volume = assemble(rho * dx)/omega
 
-    objValue = assemble(J)
+    return rho, u, volume, currentObjValue, dJdrho, objResidual
 
+def projectFletcherReeves():
+    stepSize = 100
+    c = 0.95
+    beta = 0.5
+    alpha = 0
 
-    return rho, u, volume, objValue, dJdrho, objResidual
+    # Solve forward PDE
+    solve(R_fwd == 0, u, bcs = bcs)
+    currentObjValue = assemble(J)
 
+    # Compute gradients w.r.t to design 
+    dJdrho.interpolate(assemble(derivative(L, rho)).riesz_representation(riesz_map = "l2"))
+
+    # Do gradient projection into appropriate spaces for volume constraint
+    projdJdrho.interpolate(dJdrho - assemble(dJdrho * dx)/omega)
+
+    alpha = projdJdrho / prevdJdrho
+    prevdJdrho.interpolate(projdJdrho)
+
+    projdJdrho.interpolate(projdJdrho + alpha * projdJdrho)
+
+    # Update design
+    rho.interpolate(rho - stepSize * projdJdrho)
+    
+    # Solve forward PDE
+    solve(R_fwd == 0, u, bcs = bcs)
+    nextObjValue = assemble(J)
+
+    if nextObjValue > currentObjValue - c * stepSize * assemble(inner(projdJdrho, projdJdrho) * dx):
+        stepSize = stepSize * beta
+
+        # Update design
+        rho.interpolate(rho - stepSize * projdJdrho)
+
+        # Solve forward PDE
+        solve(R_fwd == 0, u, bcs = bcs)
+        nextObjValue = assemble(J)
+    else:
+        # Update design
+        rho.interpolate(rho - stepSize * projdJdrho)
+
+    objResidual = abs(nextObjValue - currentObjValue)
+
+    # Compute volume fractions
+    volume = assemble(rho * dx)/omega
+
+    return rho, u, volume, currentObjValue, dJdrho, objResidual
 converged = False
 if __name__ == "__main__":
 
     i = 0
     while i < iterations and not converged:
 
-        rho, u, volume, objValue, dJdrho, objResidual = projectGradientDescent()
+        if pncg_type == "gd":
+            rho, u, volume, objValue, dJdrho, objResidual = projectGradientDescent()
+        if pncg_type == "fr":
+            rho, u, volume, objValue, dJdrho, objResidual = projectFletcherReeves()
 
         # Convergence check
         if i == 0:

@@ -137,23 +137,24 @@ def projectedNonlinearConjugateGradient(type):
             alpha = 0
         else:
             deltadJdrho.interpolate(projdJdrho - prevdJdrho)
-            alpha = max(0, assemble(inner(deltadJdrho, projdJdrho) * dx) / assemble(inner(prevdJdrho, prevdJdrho) * dx))
+            alpha = assemble(inner(deltadJdrho, projdJdrho) * dx) / assemble(inner(prevdJdrho, prevdJdrho) * dx)
 
     elif type == 'hs':
         if assemble(inner(prevdJdrho, prevdJdrho) * dx) == 0.0:
             alpha = 0
         else:
             deltadJdrho.interpolate(projdJdrho - prevdJdrho)
-            alpha = max(0, assemble(inner(deltadJdrho, projdJdrho) * dx) / assemble(inner(prevdJdrho, deltadJdrho) * dx))
+            alpha = assemble(inner(deltadJdrho, projdJdrho) * dx) / assemble(inner(prevdJdrho, deltadJdrho) * dx)
 
     elif type == 'dy':
         if assemble(inner(prevdJdrho, prevdJdrho) * dx) == 0.0:
             alpha = 0
         else:
             deltadJdrho.interpolate(projdJdrho - prevdJdrho)
-            alpha = max(0, assemble(inner(projdJdrho, projdJdrho) * dx) / assemble(inner(prevdJdrho, deltadJdrho) * dx))
+            alpha = assemble(inner(projdJdrho, projdJdrho) * dx) / assemble(inner(prevdJdrho, deltadJdrho) * dx)
     
     prevdJdrho.interpolate(projdJdrho)
+    
     
     projdJdrho.interpolate(projdJdrho + alpha * projdJdrho)
     # Update design

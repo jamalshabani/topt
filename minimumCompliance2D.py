@@ -197,7 +197,6 @@ def projectFletcherReeves():
     stepSize = 100
     c = 0.95
     beta = 0.5
-    alpha = 0
 
     # Solve forward PDE
     solve(R_fwd == 0, u, bcs = bcs)
@@ -209,7 +208,10 @@ def projectFletcherReeves():
     # Do gradient projection into appropriate spaces for volume constraint
     projdJdrho.interpolate(dJdrho - assemble(dJdrho * dx)/omega)
 
-    alpha = projdJdrho / prevdJdrho
+    if assemble(inner(prevdJdrho, prevdJdrho) * dx) == 0.0:
+        alpha = 0
+    else:
+        alpha = assemble(inner(projdJdrho, projdJdrho) * dx) / assemble(inner(prevdJdrho, prevdJdrho) * dx)
     prevdJdrho.interpolate(projdJdrho)
 
     projdJdrho.interpolate(projdJdrho + alpha * projdJdrho)

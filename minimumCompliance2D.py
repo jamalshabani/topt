@@ -106,9 +106,7 @@ L = J - R_legrange
 beam = VTKFile(options.output + '/beam.pvd')
 
 # TO DO!
-# 1. Add line search for fast convergence
-# 2. Add projected congugate gradient descents methods
-# 3. Add 3D support
+# 1. Add 3D support
 
 def projectedNonlinearConjugateGradient(type):
     stepSize = 100
@@ -185,98 +183,8 @@ def projectedNonlinearConjugateGradient(type):
 
     return rho, u, volume, currentObjValue, dJdrho, objResidual
     
-def projectGradientDescent():
-    stepSize = 100
-    c = 0.95
-    beta = 0.5
-
-    # Solve forward PDE
-    solve(R_fwd == 0, u, bcs = bcs)
-    currentObjValue = assemble(J)
-
-    # Compute gradients w.r.t to design 
-    dJdrho.interpolate(assemble(derivative(L, rho)).riesz_representation(riesz_map = "l2"))
-
-    # Do gradient projection into appropriate spaces for volume constraint
-    projdJdrho.interpolate(dJdrho - assemble(dJdrho * dx)/omega)
-
-    # Update design
-    rho.interpolate(rho - stepSize * projdJdrho)
-    
-    # Solve forward PDE
-    solve(R_fwd == 0, u, bcs = bcs)
-    nextObjValue = assemble(J)
-
-    if nextObjValue > currentObjValue - c * stepSize * assemble(inner(projdJdrho, projdJdrho) * dx):
-        stepSize = stepSize * beta
-
-        # Update design
-        rho.interpolate(rho - stepSize * projdJdrho)
-
-        # Solve forward PDE
-        solve(R_fwd == 0, u, bcs = bcs)
-        nextObjValue = assemble(J)
-    else:
-        # Update design
-        rho.interpolate(rho - stepSize * projdJdrho)
-
-    objResidual = abs(nextObjValue - currentObjValue)
-
-    # Compute volume fractions
-    volume = assemble(rho * dx)/omega
-
-    return rho, u, volume, currentObjValue, dJdrho, objResidual
-
-def projectFletcherReeves():
-    stepSize = 100
-    c = 0.95
-    beta = 0.5
-
-    # Solve forward PDE
-    solve(R_fwd == 0, u, bcs = bcs)
-    currentObjValue = assemble(J)
-
-    # Compute gradients w.r.t to design 
-    dJdrho.interpolate(assemble(derivative(L, rho)).riesz_representation(riesz_map = "l2"))
-
-    # Do gradient projection into appropriate spaces for volume constraint
-    projdJdrho.interpolate(dJdrho - assemble(dJdrho * dx)/omega)
-
-    if assemble(inner(prevdJdrho, prevdJdrho) * dx) == 0.0:
-        alpha = 0
-    else:
-        alpha = assemble(inner(projdJdrho, projdJdrho) * dx) / assemble(inner(prevdJdrho, prevdJdrho) * dx)
-    prevdJdrho.interpolate(projdJdrho)
-
-    projdJdrho.interpolate(projdJdrho + alpha * projdJdrho)
-
-    # Update design
-    rho.interpolate(rho - stepSize * projdJdrho)
-    
-    # Solve forward PDE
-    solve(R_fwd == 0, u, bcs = bcs)
-    nextObjValue = assemble(J)
-
-    if nextObjValue > currentObjValue - c * stepSize * assemble(inner(projdJdrho, projdJdrho) * dx):
-        stepSize = stepSize * beta
-
-        # Update design
-        rho.interpolate(rho - stepSize * projdJdrho)
-
-        # Solve forward PDE
-        solve(R_fwd == 0, u, bcs = bcs)
-        nextObjValue = assemble(J)
-    else:
-        # Update design
-        rho.interpolate(rho - stepSize * projdJdrho)
-
-    objResidual = abs(nextObjValue - currentObjValue)
-
-    # Compute volume fractions
-    volume = assemble(rho * dx)/omega
-
-    return rho, u, volume, currentObjValue, dJdrho, objResidual
 converged = False
+
 if __name__ == "__main__":
 
     i = 0

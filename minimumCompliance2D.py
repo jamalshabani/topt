@@ -3,6 +3,7 @@ def parse():
     parser = argparse.ArgumentParser()
     parser.add_argument('-n', '--iterations', type = int, default = 100, help = 'Number of iterations')
     parser.add_argument('-tol', '--tolerance', type = float, default = 1.0e-6, help = 'Convergence tolerance')
+    parser.add_argument('-pncg', '--pncg', type = str, default = 'gd', help = 'Nonlinear conjugate gradient method type')
     parser.add_argument('-v', '--volume', type = float, default = 0.4, help = 'Volume fraction occupied by solid')
     parser.add_argument('-k', '--kappa', type = float, default = 1.0e-2, help = 'Weight of the perimeter')
     parser.add_argument('-e', '--epsilon', type = float, default = 5.0e-5, help = 'Phase-field regularization parameter')
@@ -12,6 +13,9 @@ def parse():
     return options
 
 options = parse()
+
+# Get nonlinear conjugate gradient method type
+pncg_type = options.pncg
 
 from firedrake import *
 

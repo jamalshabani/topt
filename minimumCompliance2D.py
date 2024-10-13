@@ -128,11 +128,11 @@ def projectedNonlinearConjugateGradient(type):
     if type == 'gd':
         alpha = 0
 
-    # elif type == 'fr':
-    #     if assemble(inner(prevdJdrho, prevdJdrho) * dx) == 0.0:
-    #         alpha = 0
-    #     else:
-    #         alpha = assemble(inner(projdJdrho, projdJdrho) * dx) / assemble(inner(prevdJdrho, prevdJdrho) * dx)
+    elif type == 'fr':
+        if assemble(inner(prevdJdrho, prevdJdrho) * dx) == 0.0:
+            alpha = 0
+        else:
+            alpha = assemble(inner(projdJdrho, projdJdrho) * dx) / assemble(inner(prevdJdrho, prevdJdrho) * dx)
 
     # elif type == 'pr':
     #     if assemble(inner(prevdJdrho, prevdJdrho) * dx) == 0.0:

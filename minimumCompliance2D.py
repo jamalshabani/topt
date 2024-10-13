@@ -36,6 +36,7 @@ dJdrho = Function(V, name = "Gradient w.r.t rho")
 projdJdrho = Function(V, name = "Projected gradient")
 prevdJdrho = Function(V, name = "Previous gradient")
 currdJdrho = Function(V, name = "Current gradient")
+deltadJdrho = Function(V, name = "Delta gradient")
 x, y = SpatialCoordinate(mesh)
 rho.interpolate(Constant(options.volume))
 ###### End Initial Design #####
@@ -109,7 +110,7 @@ beam = VTKFile(options.output + '/beam.pvd')
 # 2. Add projected congugate gradient descents methods
 # 3. Add 3D support
 
-def projectedNonlinearConjugateGradient():
+def projectedNonlinearConjugateGradient(type):
     stepSize = 100
     c = 0.95
     beta = 0.5
@@ -124,6 +125,39 @@ def projectedNonlinearConjugateGradient():
     # Do gradient projection into appropriate spaces for volume constraint
     projdJdrho.interpolate(dJdrho - assemble(dJdrho * dx)/omega)
 
+    if type == 'gd':
+        alpha = 0
+
+    # elif type == 'fr':
+    #     if assemble(inner(prevdJdrho, prevdJdrho) * dx) == 0.0:
+    #         alpha = 0
+    #     else:
+    #         alpha = assemble(inner(projdJdrho, projdJdrho) * dx) / assemble(inner(prevdJdrho, prevdJdrho) * dx)
+
+    # elif type == 'pr':
+    #     if assemble(inner(prevdJdrho, prevdJdrho) * dx) == 0.0:
+    #         alpha = 0
+    #     else:
+    #         deltadJdrho.interpolate(projdJdrho - prevdJdrho)
+    #         alpha = max(0, assemble(inner(deltadJdrho, projdJdrho) * dx) / assemble(inner(prevdJdrho, prevdJdrho) * dx))
+
+    # elif type == 'hs':
+    #     if assemble(inner(prevdJdrho, prevdJdrho) * dx) == 0.0:
+    #         alpha = 0
+    #     else:
+    #         deltadJdrho.interpolate(projdJdrho - prevdJdrho)
+    #         alpha = max(0, assemble(inner(deltadJdrho, projdJdrho) * dx) / assemble(inner(prevdJdrho, deltadJdrho) * dx))
+
+    # elif type == 'dy':
+    #     if assemble(inner(prevdJdrho, prevdJdrho) * dx) == 0.0:
+    #         alpha = 0
+    #     else:
+    #         deltadJdrho.interpolate(projdJdrho - prevdJdrho)
+    #         alpha = max(0, assemble(inner(projdJdrho, projdJdrho) * dx) / assemble(inner(prevdJdrho, deltadJdrho) * dx))
+    
+    prevdJdrho.interpolate(projdJdrho)
+    
+    projdJdrho.interpolate(projdJdrho + alpha * projdJdrho)
     # Update design
     rho.interpolate(rho - stepSize * projdJdrho)
     
@@ -248,10 +282,7 @@ if __name__ == "__main__":
     i = 0
     while i < iterations and not converged:
 
-        if pncg_type == "gd":
-            rho, u, volume, objValue, dJdrho, objResidual = projectGradientDescent()
-        if pncg_type == "fr":
-            rho, u, volume, objValue, dJdrho, objResidual = projectFletcherReeves()
+        rho, u, volume, objValue, dJdrho, objResidual = projectedNonlinearConjugateGradient(pncg_type)
 
         # Convergence check
         if i == 0:

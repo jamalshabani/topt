@@ -2,11 +2,15 @@ def parse():
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('-n', '--iterations', type = int, default = 100, help = 'Number of iterations')
-    parser.add_argument('-tol', '--tolerance', type = float, default = 1.0e-6, help = 'Convergence tolerance')
-    parser.add_argument('-pncg', '--pncg', type = str, default = 'gd', help = 'Nonlinear conjugate gradient method type')
+    parser.add_argument('-tol', '--tolerance', type = float, default = 1.0e-5, help = 'Convergence tolerance')
+    parser.add_argument('-e2', '--e2modulus', type = float, default = 0.01, help = 'Elastic Modulus for material 2')
+    parser.add_argument('-e3', '--e3modulus', type = float, default = 1.0, help = 'Elastic Modulus for material 3')
+    parser.add_argument('-v2', '--volume2', type = float, default = 0.3, help = 'Target volume for structural material')
+    parser.add_argument('-v3', '--volume3', type = float, default = 0.3, help = 'Target volume for responsive material')
+    parser.add_argument('-pncg', '--pncg', type = str, default = 'fr', help = 'Nonlinear conjugate gradient method type')
     parser.add_argument('-v', '--volume', type = float, default = 0.4, help = 'Volume fraction occupied by solid')
     parser.add_argument('-k', '--kappa', type = float, default = 1.0e-2, help = 'Weight of the perimeter')
-    parser.add_argument('-e', '--epsilon', type = float, default = 5.0e-5, help = 'Phase-field regularization parameter')
+    parser.add_argument('-e', '--epsilon', type = float, default = 2.5e-3, help = 'Phase-field regularization parameter')
     parser.add_argument('-o', '--output', type = str, default = 'output', help = 'Output folder')
     parser.add_argument('-m', '--mesh', type = str, default = 'cantileverBeam.msh', help = 'Dimensions of meshed beam')
     options = parser.parse_args()
@@ -46,7 +50,7 @@ omega = assemble(Function(V).interpolate(1.0) * dx)
 
 # Define the constant parameters used in the problem
 kappa = options.kappa # Perimeter weight
-delta = 1.0e-3 
+delta = 1.0e-6 
 epsilon = options.epsilon
 
 kappa_d_e = kappa / epsilon
@@ -132,22 +136,7 @@ def projectedNonlinearConjugateGradient(type):
         else:
             alpha = assemble(inner(projdJdrho, projdJdrho) * dx) / assemble(inner(prevdJdrho, prevdJdrho) * dx)
 
-    elif type == 'pr':
-        if assemble(inner(prevdJdrho, prevdJdrho) * dx) == 0.0:
-            alpha = 0
-        else:
-            deltadJdrho.interpolate(projdJdrho - prevdJdrho)
-            alpha = assemble(inner(deltadJdrho, projdJdrho) * dx) / assemble(inner(prevdJdrho, prevdJdrho) * dx)
-
-    elif type == 'hs':
-        if assemble(inner(prevdJdrho, prevdJdrho) * dx) == 0.0:
-            alpha = 0
-        else:
-            deltadJdrho.interpolate(projdJdrho - prevdJdrho)
-            alpha = assemble(inner(deltadJdrho, projdJdrho) * dx) / assemble(inner(prevdJdrho, deltadJdrho) * dx)
-    
     prevdJdrho.interpolate(projdJdrho)
-    
     
     projdJdrho.interpolate(projdJdrho + alpha * projdJdrho)
     # Update design
@@ -212,4 +201,3 @@ if __name__ == "__main__":
         print("Converged after {} iterations......".format(i))
     else:
         print("Maximum iterations reached......")
-    

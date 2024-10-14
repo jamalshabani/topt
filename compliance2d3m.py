@@ -46,7 +46,7 @@ omega = assemble(Function(V).interpolate(1.0) * dx)
 
 # Define the constant parameters used in the problem
 kappa = options.kappa # Perimeter weight
-delta = 1.0e-6 
+delta = 1.0e-3 
 epsilon = options.epsilon
 
 kappa_d_e = kappa / epsilon

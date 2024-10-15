@@ -185,8 +185,8 @@ def projectedNonlinearConjugateGradient(type):
             alpha2 = 0
             alpha3 = 0
         else:
-            alpha2 = assemble(inner(projdJdrho2, projdJdrho2) * dx) / assemble(inner(prevdJdrho2, prevdJdrho2) * dx)
-            alpha3 = assemble(inner(projdJdrho3, projdJdrho3) * dx) / assemble(inner(prevdJdrho3, prevdJdrho3) * dx)
+            alpha2 = min(1, assemble(inner(projdJdrho2, projdJdrho2) * dx) / assemble(inner(prevdJdrho2, prevdJdrho2) * dx))
+            alpha3 = min(1, assemble(inner(projdJdrho3, projdJdrho3) * dx) / assemble(inner(prevdJdrho3, prevdJdrho3) * dx))
 
     prevdJdrho2.interpolate(projdJdrho2)
     prevdJdrho3.interpolate(projdJdrho3)

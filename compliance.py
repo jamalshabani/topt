@@ -38,6 +38,7 @@ VV = VectorFunctionSpace(mesh, 'CG', 1)
 # Create initial design
 ###### Begin Initial Design #####
 rho = Function(V, name = "Material density")
+dJdrho = Function(V, name = "Gradient w.r.t rho")
 rho_i = Function(V, name = "Material density")
 x, y = SpatialCoordinate(mesh)
 rho.interpolate(Constant(options.volume))
@@ -128,7 +129,8 @@ def FormObjectiveGradient(tao, x, G):
 	# Solve forward PDE
 	solve(R_fwd == 0, u, bcs = bcs)
 
-	dJdrho = assemble(derivative(L, rho))
+	#dJdrho = assemble(derivative(L, rho))
+	dJdrho.interpolate(assemble(derivative(L, rho)).riesz_representation(riesz_map = "l2"))
 	with dJdrho.dat.vec as dJdrho_vec:
 		G.set(0.0)
 		G.axpy(1.0, dJdrho_vec)

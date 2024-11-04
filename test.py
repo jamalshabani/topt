@@ -18,8 +18,8 @@ mesh = Mesh(options.mesh)
 
 Id = Identity(mesh.geometric_dimension()) # Identity tensor
 
-E = [1.0, 1.0e-6] #Young's modulus for each materials with index -1 as void
-volFractions = [0.4, 0.6] #Volume fractions with index -1 as void
+E = [1.0, 1.0, 1.0e-6] #Young's modulus for each materials with index -1 as void
+volFractions = [0.4, 0.2, 0.6] #Volume fractions with index -1 as void
 nMaterials = len(volFractions)  #Number of materials
 nu = 0.3 #nu poisson ratio
 pDimension = 2
@@ -31,7 +31,6 @@ U = VectorFunctionSpace(mesh, 'CG', 1, dim = pDimension)
 
 # Create initial design guess
 ###### Begin Initial Design#####
-rho =  Function(D, name = "Design variables")
 rhoList = []
 muList = []
 lambaList = []
@@ -43,6 +42,9 @@ for i in range(nMaterials):
     lambaList.append((E[i] * nu)/((1 + nu) * (1 - 2 * nu)))
 
 rho = Function(D).interpolate(as_vector([rhoList[i] for i in range(nMaterials)]))
+
+a, b = rho.subfunctions[0], rho.subfunctions[1]
+print(a, b)
 ###### End Initial Design#####
 
 # Total volume of the domain |omega|

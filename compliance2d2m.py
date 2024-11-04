@@ -1,9 +1,9 @@
 def parse():
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('-n', '--iterations', type = int, default = 5000, help = 'Number of iterations')
+    parser.add_argument('-n', '--iterations', type = int, default = 10, help = 'Number of iterations')
     parser.add_argument('-tol', '--tolerance', type = float, default = 1.0e-6, help = 'Convergence tolerance')
-    parser.add_argument('-pncg', '--pncg', type = str, default = 'fr', help = 'Nonlinear conjugate gradient method type')
+    parser.add_argument('-pncg', '--pncg', type = str, default = 'gd', help = 'Nonlinear conjugate gradient method type')
     parser.add_argument('-v', '--volume', type = float, default = 0.4, help = 'Volume fraction occupied by solid')
     parser.add_argument('-k', '--kappa', type = float, default = 1.0e-2, help = 'Weight of the perimeter')
     parser.add_argument('-e', '--epsilon', type = float, default = 2.5e-3, help = 'Phase-field regularization parameter')
@@ -160,7 +160,7 @@ def projectedNonlinearConjugateGradient(type):
     # Compute volume fractions
     volume = assemble(rho * dx)/omega
 
-    return rho, u, volume, currentObjValue, dJdrho, objResidual
+    return rho, u, volume, currentObjValue, dJdrho, projdJdrho, objResidual
     
 converged = False
 
@@ -169,7 +169,9 @@ if __name__ == "__main__":
     i = 0
     while i < iterations and not converged:
 
-        rho, u, volume, objValue, dJdrho, objResidual = projectedNonlinearConjugateGradient(pncg_type)
+        rho, u, volume, objValue, dJdrho, projdJdrho, objResidual = projectedNonlinearConjugateGradient(pncg_type)
+        print(projdJdrho.vector().array())
+        input("")
 
         # Convergence check
         if i == 0:
